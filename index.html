@@ -6,7 +6,7 @@
     <meta name="description" content="dilevreni.com | Türkiye'nin en kapsamlı dil bilgisi, TDK sözlük ve küresel kitap arşivi.">
     <meta name="keywords" content="dil evreni, dilevreni.com, tdk sözlük, yazım kuralları, dil bilgisi, openlibrary, kitap arşivi">
     <meta name="author" content="Ömer Faruk Özcan">
-    <title>Dil Evreni | dilevreni.com</title>
+    <title>Dil Evreni | Profesyonel Dil Rehberi ve Kütüphane</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -202,6 +202,7 @@
         .result-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 3rem; margin-bottom: 1.5rem; box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
         .result-card h2 { color: var(--primary); font-size: 3rem; margin-top: 0; text-transform: lowercase; letter-spacing: -1px; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; font-weight: 900;}
         .loading { color: var(--primary); font-weight: 800; text-align: center; margin: 4rem 0; font-size: 1.4rem; letter-spacing: 2px; animation: pulse 1.5s infinite; text-transform: uppercase;}
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; text-shadow: 0 0 20px var(--primary); } 100% { opacity: 0.5; } }
 
         /* Kitaplık Grid */
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2.5rem; }
@@ -338,7 +339,7 @@
     <header>
         <div class="logo" onclick="switchTab('rehber')" title="Ana Sayfaya Dön">Dil<span>Evreni</span></div>
         <nav>
-            <button onclick="switchTab('rehber')" class="active" id="btn-rehber">📖 Ansiklopedi</button>
+            <button onclick="switchTab('rehber')" class="active" id="btn-rehber">📖 Dil Rehberi</button>
             <button onclick="switchTab('sozluk')" id="btn-sozluk">🔍 Sözlük Ağı</button>
             <button onclick="switchTab('kutuphane')" id="btn-kutuphane">📚 Dünya Kütüphanesi</button>
             <button onclick="switchTab('iletisim')" id="btn-iletisim">✉️ İletişim</button>
@@ -433,7 +434,7 @@
                     </div>
                     
                     <div class="contact-form">
-                        <form action="https://formspree.io/f/mjgpzbkr" method="POST">
+                        <form action="BURAYA_FORMSPREE_LINKI_GELECEK" method="POST">
                             <input type="text" name="name" placeholder="Adınız Soyadınız" required>
                             <input type="email" name="email" placeholder="E-posta Adresiniz" required>
                             <input type="text" name="subject" placeholder="Konu" required>
