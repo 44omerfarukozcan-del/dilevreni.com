@@ -70,7 +70,6 @@
             padding: 1.2rem 2.5rem; display: flex; justify-content: space-between; align-items: center; 
             border-bottom: 1px solid var(--border); z-index: 100; margin-top: 3px;
         }
-        /* LOGO TIKLANABİLİR YAPILDI */
         .logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.5px; flex-shrink: 0; color: #fff; text-shadow: 0 0 15px var(--primary-glow); display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s;}
         .logo:hover { transform: scale(1.02); text-shadow: 0 0 25px var(--primary-glow); }
         .logo span { color: var(--primary); }
@@ -202,7 +201,6 @@
         .result-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 3rem; margin-bottom: 1.5rem; box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
         .result-card h2 { color: var(--primary); font-size: 3rem; margin-top: 0; text-transform: lowercase; letter-spacing: -1px; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; font-weight: 900;}
         .loading { color: var(--primary); font-weight: 800; text-align: center; margin: 4rem 0; font-size: 1.4rem; letter-spacing: 2px; animation: pulse 1.5s infinite; text-transform: uppercase;}
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; text-shadow: 0 0 20px var(--primary); } 100% { opacity: 0.5; } }
 
         /* Kitaplık Grid */
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2.5rem; }
@@ -268,7 +266,8 @@
             display: flex; flex-direction: column; gap: 2rem; align-items: center;
             background: linear-gradient(to top, rgba(9,9,11,1), transparent);
         }
-        .footer-brand { font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: 1px;}
+        .footer-brand { font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: 1px; cursor: pointer; transition: 0.3s;}
+        .footer-brand:hover { transform: scale(1.05); text-shadow: 0 0 20px var(--primary-glow); }
         .footer-brand span { color: var(--primary);}
         .footer-text { color: var(--secondary); font-size: 1.15rem; font-weight: 500;}
         .footer-name { color: #fff; font-weight: 900; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255,255,255,0.4);}
@@ -434,7 +433,7 @@
                     </div>
                     
                     <div class="contact-form">
-                        <form action="BURAYA_FORMSPREE_LINKI_GELECEK" method="POST">
+                        <form action="https://formspree.io/f/mjgpzbkr" method="POST">
                             <input type="text" name="name" placeholder="Adınız Soyadınız" required>
                             <input type="email" name="email" placeholder="E-posta Adresiniz" required>
                             <input type="text" name="subject" placeholder="Konu" required>
@@ -489,7 +488,7 @@
         }
 
         // =========================================================================
-        // EKSİKSİZ VERİTABANI
+        // EKSİKSİZ VERİTABANI (YAZIMI KARIŞTIRILAN SÖZCÜKLER EKLENDİ)
         // =========================================================================
         const db = {
             yazim: [
@@ -549,6 +548,21 @@
                         { rule: "Pekiştirmeli Sözcüklerin Yazımı", exp: "İlk hecenin sonuna m, p, r, s ünsüzlerinden birinin getirilmesiyle yapılan pekiştirmeler DAİMA BİTİŞİK yazılır.", ex: "<strong>Örnekler:</strong> Masmavi, tertemiz, sapsarı, paramparça, çırılçıplak." },
                         { rule: "Yabancı Kökenli Kelimelerin Yazımı", exp: "İki ünsüzle başlayan Batı kökenli kelimeler araya ünlü konmadan yazılır. 'Şoför, tıraş, kılavuz, eşofman, dinozor' gibi kelimelerin yazımına dikkat edilmelidir.", ex: "<strong>Doğru:</strong> Tren, spor, program, tıraş (ı ile), kılavuz (ı ile), şoför." }
                     ], wikiQuery: "Türkçe" 
+                },
+                { id: "y8", title: "Düzeltme (Şapka) İşareti (^)", desc: "Kaldırıldığı sanılan ancak hala TDK kurallarında yer alan şapka işaretinin kullanımı.", 
+                    items: [
+                        { rule: "Anlam Karışıklığını Önleme", exp: "Yazılışları bir, anlamları ve okunuşları ayrı olan kelimeleri ayırt etmek için kullanılır.", ex: "<strong>Örnekler:</strong> kar (yağış) / kâr (kazanç), ama (fakat) / âmâ (kör), hala (babanın kız kardeşi) / hâlâ (henüz)." },
+                        { rule: "Nispet İ'sinin Kullanımı", exp: "Arapça ve Farsçadan dilimize giren kelimelerdeki aitlik (nispet) ekini, belirtme durumu veya iyelik ekiyle karıştırmamak için kullanılır.", ex: "<strong>Örnekler:</strong> (Türk) askeri / askerî (müdahale), (İslam) dini / dinî (bilgiler)." },
+                        { rule: "İnce Okutulan Harfler (k, g, l)", exp: "Arapça ve Farsçadan giren kelimelerde 'k, g, l' ünsüzlerinin ince okunduğunu göstermek için kendilerinden sonra gelen a ve u ünlüleri üzerine konur.", ex: "<strong>Örnekler:</strong> Dükkân, kâğıt, dergâh, karargâh, sükût, mahkûm." }
+                    ], wikiQuery: "Düzeltme_işareti" 
+                },
+                { id: "y9", title: "Yazımı karışan Kelimeler", desc: "Günlük hayatta ve sınavlarda yazımı en çok karıştırılan sözcüklerin doğrusu ve yanlışı.", 
+                    items: [
+                        { rule: "En Çok Hata Yapılanlar", exp: "Bu kelimelerin yazımı genellikle telaffuzdan kaynaklı olarak yanlış yazılır.", ex: "<strong>Doğru:</strong> Herkes | <strong>Yanlış:</strong> Herkez<br><strong>Doğru:</strong> Yalnız (yalıntan) | <strong>Yanlış:</strong> Yanlız<br><strong>Doğru:</strong> Yanlış (yanılmaktan) | <strong>Yanlış:</strong> Yalnış<br><strong>Doğru:</strong> Sürpriz | <strong>Yanlış:</strong> Süpriz" },
+                        { rule: "Şey Kelimesi ve Belgesizler", exp: "İçinde 'şey' geçen tüm kelimeler AYRI yazılır. Bazı belgisiz sıfat/zamirler ise bitişik yazılır.", ex: "<strong>Doğru (Ayrı):</strong> Her şey, hiçbir şey, bir şey.<br><strong>Doğru (Bitişik):</strong> Birkaç, birçok, birtakım, herhangi, hiçbir." },
+                        { rule: "Yabancı Kökenli Kelimeler", exp: "Özellikle Batı dillerinden geçen ve içinde ses düşmesi/türemesi olduğu sanılan kelimeler.", ex: "<strong>Doğru:</strong> Orijinal (Orjinal değil)<br><strong>Doğru:</strong> Entelektüel (Entellektüel değil)<br><strong>Doğru:</strong> Eşofman (Eşortman değil)<br><strong>Doğru:</strong> Dinozor (Dinazor değil)<br><strong>Doğru:</strong> Makine (Makina değil)<br><strong>Doğru:</strong> Şoför (Şöför değil)<br><strong>Doğru:</strong> Kravat (Kıravat değil)<br><strong>Doğru:</strong> Hafriyat (Harfiyat değil)" },
+                        { rule: "Ünlü ve Ünsüz Uyumlarında Karıştırılanlar", exp: "Araya ünlü harf girip girmeyeceği veya harflerin yeri karıştırılan kelimeler.", ex: "<strong>Doğru:</strong> Tıraş (ı ile)<br><strong>Doğru:</strong> Kılavuz (ı ile)<br><strong>Doğru:</strong> Kiprik değil, <strong>Kirpik</strong><br><strong>Doğru:</strong> Kirbit değil, <strong>Kibrit</strong><br><strong>Doğru:</strong> Eksoz veya Egsoz değil, <strong>Egzoz</strong><br><strong>Doğru:</strong> Şevkat değil, <strong>Şefkat</strong>" }
+                    ], wikiQuery: "Türkçe_yazım_kuralları" 
                 }
             ],
             noktalama: [
@@ -625,12 +639,12 @@
                         { rule: "Ünlü Türemesi", exp: "Bazı kelimelere küçültme eki (-cik) getirildiğinde araya fazladan bir ünlü girer.", ex: "<strong>Örnekler:</strong> Az-cık -> Azıcık / Dar-cık -> Daracık / Bir-cik -> Biricik." }
                     ], wikiQuery: "Ses_bilgisi" 
                 },
-                { id: "d3", title: "Sözcükte Yapı (Kökler ve Ekler)", desc: "Kelimelerin oluşumu, yapım ve çekim ekleri.", 
+                { id: "d3", title: "Sözcükte Yapı (Kökler ve Ekler)", desc: "Kelimelerin oluşumu, yapım ve çekim eklerinin tüm detayları.", 
                     items: [
                         { rule: "Kök (İsim Kökü ve Fiil Kökü)", exp: "Kelimenin anlamlı, bölünemeyen en küçük parçasıdır. '-mak/-mek' alabiyorsa fiil kökü, alamıyorsa isim köküdür.", ex: "<strong>İsim Kökü:</strong> Göz (Gözmek olmaz), Ev, Su.<br><strong>Fiil Kökü:</strong> Yaz- (Yazmak olur), Gel-, Sev-." },
-                        { rule: "Yapım Ekleri", exp: "Kelimenin köküne gelerek ona YENİ BİR ANLAM veya tür kazandıran eklerdir. Kelimenin yapısını 'türemiş' yapar.", ex: "<strong>Örnekler:</strong> Göz -> Gözlük (Yeni eşya) / Kitap -> Kitaplık / Simit -> Simitçi / Sev -> Sevgi." },
-                        { rule: "Çekim Ekleri", exp: "Kelimenin anlamını veya türünü DEĞİŞTİRMEYEN, sadece zamanını, kişisini, sayısını vb. belirten eklerdir.", ex: "<strong>Örnekler:</strong> Kitap -> Kitaplar (Sadece çoğaldı) / Ev -> Evde (Durumu değişti) / Gel -> Geldi (Zamanı değişti)." },
-                        { rule: "Sözcük Yapıları: Basit, Türemiş, Birleşik", exp: "Basit sözcük hiç yapım eki almamıştır (çekim eki alabilir). Türemiş sözcük en az bir yapım eki almıştır. Birleşik sözcük birden fazla kelimenin birleşmesidir.", ex: "<strong>Basit:</strong> Evden, Ağaçlar.<br><strong>Türemiş:</strong> Evcil, Ağaçlık.<br><strong>Birleşik:</strong> Çekyat, Hanımeli." }
+                        { rule: "İsim Çekim Ekleri (Tam Liste)", exp: "Kelimenin anlamını veya türünü DEĞİŞTİRMEZ. Başlıcaları şunlardır:<br><strong>1. Çoğul Eki:</strong> -lar, -ler.<br><strong>2. İyelik (Aitlik) Ekleri:</strong> -m, -n, -i, -miz, -niz, -leri (Evim, Evin, Evi...).<br><strong>3. Hal (Durum) Ekleri:</strong> -i (Belirtme), -e (Yönelme), -de (Bulunma), -den (Ayrılma).<br><strong>4. İlgi Eki:</strong> -ın, -in, -nın, -nin.", ex: "<strong>Örnek:</strong> Araba-lar-ı-nın (Çoğul + İyelik + İlgi) sözcüğünde kelimenin asıl anlamı (araba) değişmemiştir." },
+                        { rule: "Fiil Çekim Ekleri (Kip ve Kişi)", exp: "Sadece fiillere gelir. Fiillerin zamanını ve kişisini belirten eklerdir. <strong>Kip Ekleri:</strong> -yor, -di, -miş, -ecek, -r, -meli, -se, -e. <strong>Kişi (Şahıs) Ekleri:</strong> -m, -n, -k, -niz, -ler.", ex: "<strong>Örnek:</strong> Gel-di-m (di: bilinen geçmiş zaman kipi, m: 1. tekil kişi eki)." },
+                        { rule: "Yapım Ekleri (Sözcük Türeten Ekler)", exp: "Eklendiği kelimenin anlamını veya türünü DEĞİŞTİRİR. 4 çeşittir:<br><strong>1. İsimden İsim Yapanlar:</strong> -lık, -cı, -sız, -daş, -gil (Örn: Göz-lük, Yol-cu, Ev-siz).<br><strong>2. İsimden Fiil Yapanlar:</strong> -la, -al, -laş, -sa (Örn: Su-la, Çok-al, Şaka-laş).<br><strong>3. Fiilden İsim Yapanlar:</strong> -gi, -ım, -ak, -gın, -ıcı (Örn: Sev-gi, Seç-im, Yat-ak).<br><strong>4. Fiilden Fiil Yapanlar:</strong> -dır, -ıl, -in, -iş, -t (Örn: Yaz-dır, Kır-ıl, Gör-ün, Gül-üş).", ex: "<strong>Altın Kural:</strong> Yapım eki alan bir kelime artık 'Türemiş' sözcüktür." }
                     ], wikiQuery: "Sözcükte_yapı" 
                 },
                 { id: "d4", title: "Sözcük Türleri 1: İsimler ve Sıfatlar", desc: "Varlıkları karşılayan ve niteleyen kelimeler.", 
@@ -640,36 +654,45 @@
                         { rule: "İsim Tamlamaları", exp: "En az iki ismin birbirini tamamlamasıdır. Belirtili (ikisi de ek alır), Belirtisiz (sadece ikincisi ek alır), Zincirleme (üçten fazla isim).", ex: "<strong>Belirtili:</strong> Kapının kolu.<br><strong>Belirtisiz:</strong> Sokak kapısı.<br><strong>Zincirleme:</strong> Okul müdürünün arabası." }
                     ], wikiQuery: "Sözcük_türü" 
                 },
-                { id: "d5", title: "Sözcük Türleri 2: Zamir, Zarf, Edat, Bağlaç", desc: "Cümle içi görevli kelimeler.", 
+                { id: "d5", title: "Sözcük Türleri 2: Zamir, Zarf, Edat, Bağlaç", desc: "Hayat kurtaran Edat ve Bağlaç ayırma taktikleri.", 
                     items: [
                         { rule: "Zamir (Adıl)", exp: "İsim olmadıkları halde ismin yerini tutan kelimelerdir.", ex: "<strong>Kişi Zamiri:</strong> Ben, sen, o, biz, siz, onlar.<br><strong>Belgisiz:</strong> Herkes, bazıları, tümü.<br><strong>İşaret:</strong> Şunu bana ver, burası güzel." },
                         { rule: "Zarf (Belirteç)", exp: "Fiilleri, fiilimsileri ve sıfatları durum, zaman, miktar, yer-yön bakımından niteleyen kelimelerdir.", ex: "<strong>Durum (Nasıl?):</strong> Hızlı koştu.<br><strong>Zaman:</strong> Dün geldi.<br><strong>Miktar:</strong> Çok yoruldum.<br><strong>Yer-Yön:</strong> İçeri girdi." },
-                        { rule: "Edat (İlgeç) ve Bağlaç", exp: "Edatlar tek başına anlamsızdır, kelimeler arası anlam ilgisi kurar. Bağlaçlar eş görevli sözleri bağlar.", ex: "<strong>Edat:</strong> Senin gibi, sabaha kadar, onun için.<br><strong>Bağlaç:</strong> Elma ve armut, çok çalıştı ama yapamadı." }
+                        { rule: "Edat ve Bağlaçları Ayırma (Altın Taktik)", exp: "Kelimeler arası ilgi kuranlara edat, sözleri bağlayanlara bağlaç denir. Bazı kelimeler duruma göre ikisi de olabilir:<br><strong>1. İle:</strong> Cümlede yerine 've' koyabiliyorsan BAĞLAÇ, koyamıyorsan EDAT'tır.<br><strong>2. Ancak / Yalnız:</strong> Yerine 'ama/fakat' koyabiliyorsan BAĞLAÇ, 'sadece' koyabiliyorsan EDAT'tır.", ex: "<strong>Örnek (ile):</strong> Annem ile babam geldi ('ve' olur, Bağlaç). Uçak ile geldim ('ve' olmaz, Edat).<br><strong>Örnek (yalnız):</strong> Bunu yalnız sen yaparsın ('sadece' olur, Edat). Gelirim yalnız çok durmam ('ama' olur, Bağlaç)." }
                     ], wikiQuery: "Sözcük_türü" 
                 },
-                { id: "d6", title: "Fiiller (Eylemler) ve Fiilimsiler", desc: "İş, oluş bildiren kelimeler ve türevleri.", 
+                { id: "d6", title: "Fiiller (Eylemler) ve Fiilimsiler", desc: "Kip ekleri ve Fiilimsi şifrelerinin tam listesi.", 
                     items: [
-                        { rule: "Haber ve Dilek Kipleri", exp: "Haber kipleri kesin zaman bildirir (Geçmiş, Şimdiki, Gelecek, Geniş). Dilek kipleri zaman bildirmez (Gereklilik, Şart, İstek, Emir).", ex: "<strong>Haber:</strong> Geldi (-di), Gelmiş (-miş), Geliyor (-yor), Gelecek (-ecek), Gelir (-r).<br><strong>Dilek:</strong> Gelmeli (Gerek), Gelse (Şart), Gelelim (İstek), Gel! (Emir)." },
-                        { rule: "İsim-Fiil (Mastar)", exp: "Fiillere '-ma, -ış, -mak' (Mayışmak) ekleri getirilerek yapılır. Cümlede isim gibi kullanılır.", ex: "<strong>Örnek:</strong> Kitap okumayı severim. Gelişi olay oldu. Yaşamak güzeldir." },
-                        { rule: "Sıfat-Fiil (Ortaç)", exp: "Fiillere '-an, -ası, -mez, -ar, -dik, -ecek, -miş' ekleri getirilerek yapılır. Cümlede sıfat tamlaması kurar.", ex: "<strong>Örnek:</strong> Gelen adam, yıkılası dağlar, dönülmez akşam, tanıdık yüz, gelecek zaman, çürümüş elma." },
-                        { rule: "Zarf-Fiil (Bağ-Fiil / Ulaç)", exp: "Fiillere '-ken, -ıp, -arak, -ınca, -dıkça, -madan' vb. ekler getirilerek yapılır. Cümleye zaman/durum katar.", ex: "<strong>Örnek:</strong> Sen gülünce güller açar. Koşarak geldi. Durmaksızın çalıştı." }
+                        { rule: "Haber ve Dilek Kipleri", exp: "Haber kipleri kesin zaman bildirir. Dilek kipleri zaman bildirmez.<br><strong>Haber:</strong> Geldi (-di), Gelmiş (-miş), Geliyor (-yor), Gelecek (-ecek), Gelir (-r).<br><strong>Dilek:</strong> Gelmeli (Gerek), Gelse (Şart), Gelelim (İstek), Gel! (Emir).", ex: "<strong>Not:</strong> Emir kipinin eki yoktur." },
+                        { rule: "İsim-Fiil (Mastar) Ekleri", exp: "Fiillere gelerek onları isim yapan eklerdir. Cümlede isim tamlaması kurabilirler.<br>Şifresi: <strong>MAYIŞMAK</strong><br>Ekler: <strong>-ma, -me, -ış, -iş, -uş, -üş, -mak, -mek</strong>.", ex: "<strong>Örnek:</strong> Kitap oku<strong>ma</strong>yı severim. Geliş<strong>iş</strong>i olay oldu. Yaşa<strong>mak</strong> güzeldir." },
+                        { rule: "Sıfat-Fiil (Ortaç) Ekleri", exp: "Fiillere gelerek onları sıfat yapan eklerdir. Cümlede sıfat tamlaması kurarlar.<br>Şifresi: <strong>ANASIMEZARDİKECEKMİŞ</strong><br>Ekler: <strong>-an, -en, -ası, -esi, -mez, -maz, -ar, -er, -dık, -dik, -ecek, -acak, -mış, -miş</strong>.", ex: "<strong>Örnek:</strong> Gel<strong>en</strong> adam, yıkıl<strong>ası</strong> dağlar, dönül<strong>mez</strong> akşam, tanı<strong>dık</strong> yüz, gel<strong>ecek</strong> zaman, çürü<strong>müş</strong> elma." },
+                        { rule: "Zarf-Fiil (Bağ-Fiil / Ulaç) Ekleri", exp: "Fiillere gelerek onları zarf (zaman veya durum belirteci) yapan eklerdir. Cümlede zaman ve durum bildirirler.<br>Tam Liste: <strong>-ken, -alı (-eli), -madan (-meden), -ince (-ınca), -ip (-ıp, -up, -üp), -arak (-erek), -dıkça (-dikçe), -e...-e, -r...-mez, -maksızın, -casına</strong>.", ex: "<strong>Örnek:</strong> Sen gül<strong>ünce</strong> güller açar. Koş<strong>arak</strong> geldi. Dur<strong>maksızın</strong> çalıştı. Gelir gel<strong>mez</strong> beni ara. Ağlay<strong>a</strong> ağlay<strong>a</strong> gitti." }
                     ], wikiQuery: "Fiilimsi" 
                 },
-                { id: "d7", title: "Cümlenin Ögeleri", desc: "Yüklem, Özne, Nesne ve Tümleçlerin bulunması.", 
+                { id: "d7", title: "Fiilde Çatı", desc: "Fiillerin özne ve nesne ile olan ilişkisi (Etken, Edilgen, Geçişli vb.).", 
                     items: [
-                        { rule: "Temel Ögeler: Yüklem ve Özne", exp: "Yüklem, cümlenin yargısını bildiren temel kelimedir. Özne, yüklemin bildirdiği işi yapan kişidir. Yükleme 'Kim, Ne?' soruları sorulur.", ex: "<strong>Cümle:</strong> Çocuklar bahçede oynuyor.<br><strong>Yüklem:</strong> oynuyor.<br><strong>Özne (Kim oynuyor?):</strong> Çocuklar." },
-                        { rule: "Yardımcı Ögeler: Nesne", exp: "Öznenin yaptığı işten etkilenendir. Yükleme 'Neyi, Kimi, Ne?' soruları sorulur.", ex: "<strong>Örnek:</strong> Ali, kitabı (Belirtili Nesne) okudu. / Ali kitap (Belirtisiz Nesne) okuyor." },
-                        { rule: "Yardımcı Ögeler: Tümleçler", exp: "Dolaylı tümleç yer-yön-ayrılma bildirir (Kime, nerede, nereden). Zarf tümleci zaman ve durum bildirir (Ne zaman, nasıl, ne kadar).", ex: "<strong>Örnek:</strong> Yarın (Zarf Tümleci) kütüphaneden (Dolaylı Tümleç) hızlıca (Zarf Tümleci) ayrıldı." }
+                        { rule: "1. Özne-Yüklem İlişkisi (Etken ve Edilgen)", exp: "<strong>Etken Çatı:</strong> İşi yapanın (öznenin) belli olduğu fiillerdir.<br><strong>Edilgen Çatı:</strong> İşi kimin yaptığı belli değildir. Fiil '-l' veya '-n' eki alır. Sözde özne bulunur.", ex: "<strong>Etken:</strong> Polis hırsızı <strong>yakaladı</strong>. (Kim yakaladı? Polis).<br><strong>Edilgen:</strong> Hırsız <strong>yakalandı</strong>. (Kim tarafından? Belli değil)." },
+                        { rule: "2. Özne-Yüklem İlişkisi (Dönüşlü ve İşteş)", exp: "<strong>Dönüşlü Çatı:</strong> Özne işi hem kendi yapar hem de yaptığı işten kendisi etkilenir ('-l, -n' eki alır).<br><strong>İşteş Çatı:</strong> İşin birden fazla kişi tarafından 'karşılıklı' veya 'birlikte' yapıldığını bildirir ('-ş' eki alır).", ex: "<strong>Dönüşlü:</strong> Kadın aynanın karşısında <strong>tarandı</strong>.<br><strong>İşteş:</strong> Çocuklar durakta <strong>bekleşti</strong> (Birlikte). Kuşlar <strong>uçuştu</strong>." },
+                        { rule: "3. Nesne-Yüklem İlişkisi (Geçişli ve Geçişsiz)", exp: "<strong>Geçişli Fiil:</strong> Nesne alabilen fiillerdir. Fiilin başına 'Onu' kelimesi getirilebilir.<br><strong>Geçişsiz Fiil:</strong> Nesne alamayan fiillerdir. Başına 'Onu' kelimesi getirilemez.", ex: "<strong>Geçişli:</strong> (Onu) <strong>Okudum</strong>, (Onu) <strong>Kırdı</strong>.<br><strong>Geçişsiz:</strong> (Onu) <strong>Ağladı</strong> (Olmaz), (Onu) <strong>Uyudu</strong> (Olmaz)." },
+                        { rule: "4. Oldurgan ve Ettirgen Çatı", exp: "Geçişsiz bir fiile '-r, -t, -tır' ekleri getirilerek geçişli yapılıyorsa <strong>Oldurgan</strong>; zaten geçişli olan bir fiilin derecesi artırılıp iş başkasına yaptırılıyorsa <strong>Ettirgen</strong> olur.", ex: "<strong>Oldurgan:</strong> Ağlamak (Geçişsiz) -> Ağla<strong>t</strong>mak (Geçişli).<br><strong>Ettirgen:</strong> Yazmak (Geçişli) -> Yaz<strong>dır</strong>mak (Başkasına yaptırma)." }
+                    ], wikiQuery: "Çatı_(dilbilgisi)" 
+                },
+                { id: "d8", title: "Cümlenin Ögeleri", desc: "Ögeleri bulmak için Yükleme sorulması gereken sorular listesi.", 
+                    items: [
+                        { rule: "1. Yüklem ve Özne Soruları", exp: "<strong>Yüklem:</strong> Cümlenin yargısıdır, soru sorulmaz, sorular Yükleme sorulur.<br><strong>Özne Soruları:</strong> Yükleme sorulan <strong>Kim?</strong> ve <strong>Ne?</strong> sorularının cevabıdır.", ex: "Çocuklar (Özne) bahçede oynuyor (Yüklem). (Kim oynuyor? -> Çocuklar)." },
+                        { rule: "2. Nesne Soruları (Belirtili ve Belirtisiz)", exp: "Öznenin yaptığı işten etkilenendir.<br><strong>Belirtili Nesne Soruları:</strong> Neyi? Kimi? Nereyi?<br><strong>Belirtisiz Nesne Soruları:</strong> Ne? (Özneyi bulduktan sonra sorulur).", ex: "Ali, kitabı (Belirtili N.) okudu. / Ali kitap (Belirtisiz N.) okuyor." },
+                        { rule: "3. Dolaylı Tümleç (Yer Tamlayıcısı) Soruları", exp: "Sonu her zaman -e, -de veya -den ekleriyle biten sorulardır.<br><strong>Sorular:</strong> Kim<strong>e</strong>?, Kim<strong>de</strong>?, Kim<strong>den</strong>? / Nerey<strong>e</strong>?, Nere<strong>de</strong>?, Nere<strong>den</strong>? / Ney<strong>e</strong>?, Ney<strong>de</strong>?, Ney<strong>den</strong>?", ex: "Yarın okul<strong>a</strong> (Dolaylı Tümleç) gideceğim. (Nereye gideceğim? -> Okula)." },
+                        { rule: "4. Zarf Tümleci (Zarf Tamlayıcısı) Soruları", exp: "Yüklemin zamanını, durumunu, miktarını veya sebebini bildirir.<br><strong>Sorular:</strong> Nasıl?, Ne zaman?, Ne kadar?, Niçin?, Neden?, Ne diye?", ex: "Yarın (Z.T.) kütüphaneden hızlıca (Z.T.) ayrıldı. (Ne zaman ayrıldı? Yarın. Nasıl ayrıldı? Hızlıca)." }
                     ], wikiQuery: "Cümle_ögeleri" 
                 },
-                { id: "d8", title: "Cümle Türleri", desc: "Yüklemin yerine, türüne ve cümlenin yapısına göre cümleler.", 
+                { id: "d9", title: "Cümle Türleri", desc: "Yüklemin yerine, türüne ve cümlenin yapısına göre cümleler.", 
                     items: [
                         { rule: "Yüklemin Türüne Göre Cümleler", exp: "Yüklem bir isimse (veya isim soyluysa) İsim Cümlesi, yüklem çekimli bir fiilse Fiil Cümlesidir.", ex: "<strong>İsim Cümlesi:</strong> Bugün hava çok güzeldi. En sevdiğim renk mavidir.<br><strong>Fiil Cümlesi:</strong> Ali koşarak içeri girdi." },
                         { rule: "Yüklemin Yerine Göre (Kurallı/Devrik)", exp: "Yüklem cümlenin sonundaysa Kurallı, sonunda değilse Devrik, yüklem hiç yoksa Eksiltili cümledir.", ex: "<strong>Kurallı:</strong> Dün akşam sinemaya gittim.<br><strong>Devrik:</strong> Gittim dün akşam sinemaya.<br><strong>Eksiltili:</strong> Karşımızda masmavi bir deniz..." },
                         { rule: "Yapısına Göre Cümleler", exp: "Tek yargı varsa Basit, içinde fiilimsi varsa Birleşik, birden çok yüklem virgülle ayrılmışsa Sıralı, bağlaçla ayrılmışsa Bağlı cümledir.", ex: "<strong>Basit:</strong> Yağmur yağıyor.<br><strong>Birleşik:</strong> Yağmur yağınca ıslandık.<br><strong>Sıralı:</strong> Geldim, gördüm.<br><strong>Bağlı:</strong> Geldim ve gördüm." }
                     ], wikiQuery: "Türkçe_dilbilgisi" 
                 },
-                { id: "d9", title: "Anlam Bilgisi ve Anlatım Bozuklukları", desc: "Kelimede anlam ve cümle kusurları.", 
+                { id: "d10", title: "Anlam Bilgisi ve Anlatım Bozuklukları", desc: "Kelimede anlam ve cümle kusurları.", 
                     items: [
                         { rule: "Sözcükte Anlam (Gerçek, Mecaz, Terim)", exp: "Gerçek anlam, akla gelen ilk anlamdır. Mecaz, gerçek anlamdan tamamen koparak oluşan yeni anlamdır. Terim, bilim/sanat kavramıdır.", ex: "<strong>Gerçek:</strong> Ateş yandı.<br><strong>Mecaz:</strong> Sınavı geçemezsem yandım!<br><strong>Terim:</strong> Üçgenin iç açıları." },
                         { rule: "Anlamsal Anlatım Bozuklukları", exp: "Gereksiz sözcük kullanımı, çelişen sözcükler, mantık hatası veya yanlış anlamda kelime kullanmak.", ex: "<strong>Gereksiz Sözcük:</strong> Yüksek sesle bağırdı. (Bağırmak zaten yüksek sestir).<br><strong>Çelişen:</strong> Eminim bu işi belki o yapmıştır.<br><strong>Yanlış Anlam:</strong> Fiyatlar çok pahalı (Fiyat yüksek olur, ürün pahalı olur)." },
