@@ -476,14 +476,49 @@
     </div>
 
     <script>
-        // YÜKLEME EKRANI
-        window.addEventListener('load', function() {
+        // GLOBALE KELİME VERİTABANI TANIMLIYORUZ (Işık Hızında Okumak İçin)
+        let kelimeVeritabani = {};
+
+        // YÜKLEME EKRANI VE JSON ÖN BELLEKLEME (PRE-LOAD)
+        window.addEventListener('load', async function() {
+            // Yükleme ekranını kapatma animasyonu
             setTimeout(function() {
                 const preloader = document.getElementById('preloader');
                 preloader.style.opacity = '0';
                 setTimeout(() => { preloader.style.display = 'none'; }, 500);
             }, 800);
             initMenu();
+
+            // DEV VERİTABANINI ARKA PLANDA BİR KERE YÜKLE (Çökmeyi Engeller)
+            try {
+                const res = await fetch('kelimeler.json');
+                const rawData = await res.json();
+                
+                // phpMyAdmin'den gelen yapıyı buluyoruz
+                const tableObj = rawData.find(obj => obj.type === "table" && obj.name === "esanlam");
+                
+                if (tableObj && tableObj.data) {
+                    tableObj.data.forEach(row => {
+                        if(!row.kelime) return;
+                        // Kelimenin başındaki ve sonundaki boşlukları siliyoruz (Çok Önemli!)
+                        let k = row.kelime.trim().toLowerCase();
+                        let esList = [];
+                        
+                        // Olan tüm eş anlam sütunlarını tek bir diziye topluyoruz
+                        if(row.esanlam && row.esanlam.trim()) esList.push(row.esanlam.trim());
+                        if(row.esanlam2 && row.esanlam2.trim()) esList.push(row.esanlam2.trim());
+                        if(row.esanlam3 && row.esanlam3.trim()) esList.push(row.esanlam3.trim());
+                        if(row.esanlam4 && row.esanlam4.trim()) esList.push(row.esanlam4.trim());
+                        
+                        if(esList.length > 0) {
+                            kelimeVeritabani[k] = esList;
+                        }
+                    });
+                }
+                console.log(Object.keys(kelimeVeritabani).length + " adet eş anlamlı kelime başarıyla belleğe yüklendi!");
+            } catch(e) {
+                console.log("kelimeler.json yüklenirken hata oluştu. Lütfen dosya adını ve yapısını kontrol edin.");
+            }
         });
 
         // OKUMA İLERLEME ÇUBUĞU
@@ -796,10 +831,9 @@
         }
 
         // =========================================================================
-        // YENİ EŞ/ZIT ANLAMLI KELİME MOTORU (KENDİ JSON DOSYAMIZI OKUR)
+        // TDK ARAMA MOTORU (BELLEKTEKİ VERİYİ IŞIK HIZINDA OKUR)
         // =========================================================================
         async function fetchTDK() {
-            // Kullanıcının yazdığı kelimeyi al ve küçük harfe çevir
             const input = document.getElementById('searchInput').value.trim().toLowerCase();
             if (!input) return;
             
@@ -808,34 +842,17 @@
             res.innerHTML = ''; load.style.display = 'block';
             
             try {
-                // 1. TDK API'den kelimenin anlamını çekiyoruz
+                // 1. TDK Anlamını Çek
                 const r = await fetch(`https://sozluk.gov.tr/gts?ara=${input}`);
                 const data = await r.json();
                 
-                // 2. KENDİ VERİTABANIMIZDAN (kelimeler.json) eş ve zıt anlamları çekiyoruz
+                // 2. BELLEKTEKİ KENDİ VERİTABANIMIZDAN Eş Anlamlıyı Çek
                 let esZitHtml = '';
-                try {
-                    const localRes = await fetch('kelimeler.json');
-                    const localData = await localRes.json();
-                    
-                    // Eğer kullanıcının yazdığı kelime bizim veritabanında varsa:
-                    if (localData[input]) {
-                        const es = localData[input].es;
-                        const zit = localData[input].zit;
-                        
-                        esZitHtml += `<div style="display:flex; gap:10px; margin-top: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">`;
-                        
-                        if (es && es.length > 0) {
-                            esZitHtml += `<span style="background: rgba(14,165,233,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 10px rgba(14,165,233,0.2);">🤝 Eş Anlamlısı: ${es.join(', ')}</span>`;
-                        }
-                        if (zit && zit.length > 0) {
-                            esZitHtml += `<span style="background: rgba(239,68,68,0.1); border: 1px solid #ef4444; color: #ef4444; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 10px rgba(239,68,68,0.2);">⚔️ Zıt Anlamlısı: ${zit.join(', ')}</span>`;
-                        }
-                        
-                        esZitHtml += `</div>`;
-                    }
-                } catch (e) {
-                    console.log("Kendi kelime veritabanımıza (kelimeler.json) ulaşılamadı. Lütfen dosyanın yüklü olduğundan emin olun.");
+                if (kelimeVeritabani[input]) {
+                    const es = kelimeVeritabani[input];
+                    esZitHtml += `<div style="display:flex; gap:10px; margin-top: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">`;
+                    esZitHtml += `<span style="background: rgba(14,165,233,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 10px rgba(14,165,233,0.2);">🤝 Eş Anlamlısı: ${es.join(', ')}</span>`;
+                    esZitHtml += `</div>`;
                 }
 
                 load.style.display = 'none';
@@ -847,12 +864,11 @@
                 
                 const word = data[0];
                 
-                // KELİME BAŞLIĞI VE ALTINA BİZİM NEON EŞ/ZIT ANLAM KUTULARI
+                // HTML OLUŞTURMA
                 let html = `<div class="result-card">
                     <h2 style="margin-top:0; color:var(--primary); font-size:2.8rem; margin-bottom: 0.2rem; text-transform: lowercase; letter-spacing: -1px;">${word.madde}</h2>
                     ${esZitHtml}`; 
                 
-                // TDK Anlamları
                 if(word.anlamlarListe) {
                     word.anlamlarListe.forEach((a, i) => {
                         html += `<div style="padding:15px; border-bottom:1px solid var(--border); font-size:1.15rem; color:var(--text); line-height:1.6;"><strong>${i+1}.</strong> ${a.anlam}</div>`;
