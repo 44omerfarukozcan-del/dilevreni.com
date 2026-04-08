@@ -1,1 +1,19 @@
-
+{
+  "ak": { "es": ["beyaz"], "zit": ["kara", "siyah"] },
+  "siyah": { "es": ["kara"], "zit": ["beyaz", "ak"] },
+  "büyük": { "es": ["iri", "kocaman"], "zit": ["küçük", "ufak"] },
+  "küçük": { "es": ["ufak", "minik"], "zit": ["büyük", "iri"] },
+  "muallim": { "es": ["öğretmen"], "zit": ["öğrenci", "talebe"] },
+  "zengin": { "es": ["varlıklı"], "zit": ["fakir", "yoksul", "fukara"] },
+  "fakir": { "es": ["yoksul", "fukara"], "zit": ["zengin", "varlıklı"] },
+  "cevap": { "es": ["yanıt"], "zit": ["soru", "sual"] },
+  "soru": { "es": ["sual"], "zit": ["cevap", "yanıt"] },
+  "özgürlük": { "es": ["hürriyet", "bağımsızlık"], "zit": ["esaret", "tutsaklık"] },
+  "yaşlı": { "es": ["ihtiyar"], "zit": ["genç"] },
+  "genç": { "es": ["taze"], "zit": ["yaşlı", "ihtiyar"] },
+  "cesur": { "es": ["yürekli", "yiğit"], "zit": ["korkak"] },
+  "kötü": { "es": ["fena", "şer"], "zit": ["iyi", "güzel"] },
+  "iyi": { "es": ["güzel"], "zit": ["kötü", "fena"] },
+  "zaman": { "es": ["vakit"], "zit": [] },
+  "görev": { "es": ["vazife"], "zit": [] }
+}
