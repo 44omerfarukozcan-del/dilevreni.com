@@ -476,12 +476,13 @@
     </div>
 
     <script>
+        // =========================================================================
         // GLOBALE KELİME VERİTABANI TANIMLIYORUZ (Işık Hızında Okumak İçin)
+        // =========================================================================
         let kelimeVeritabani = {};
 
         // YÜKLEME EKRANI VE JSON ÖN BELLEKLEME (PRE-LOAD)
         window.addEventListener('load', async function() {
-            // Yükleme ekranını kapatma animasyonu
             setTimeout(function() {
                 const preloader = document.getElementById('preloader');
                 preloader.style.opacity = '0';
@@ -489,35 +490,48 @@
             }, 800);
             initMenu();
 
-            // DEV VERİTABANINI ARKA PLANDA BİR KERE YÜKLE (Çökmeyi Engeller)
+            // DEV VERİTABANINI ARKA PLANDA BİR KERE YÜKLE
             try {
                 const res = await fetch('kelimeler.json');
                 const rawData = await res.json();
                 
-                // phpMyAdmin'den gelen yapıyı buluyoruz
-                const tableObj = rawData.find(obj => obj.type === "table" && obj.name === "esanlam");
-                
-                if (tableObj && tableObj.data) {
-                    tableObj.data.forEach(row => {
-                        if(!row.kelime) return;
-                        // Kelimenin başındaki ve sonundaki boşlukları siliyoruz (Çok Önemli!)
-                        let k = row.kelime.trim().toLowerCase();
-                        let esList = [];
-                        
-                        // Olan tüm eş anlam sütunlarını tek bir diziye topluyoruz
-                        if(row.esanlam && row.esanlam.trim()) esList.push(row.esanlam.trim());
-                        if(row.esanlam2 && row.esanlam2.trim()) esList.push(row.esanlam2.trim());
-                        if(row.esanlam3 && row.esanlam3.trim()) esList.push(row.esanlam3.trim());
-                        if(row.esanlam4 && row.esanlam4.trim()) esList.push(row.esanlam4.trim());
-                        
-                        if(esList.length > 0) {
-                            kelimeVeritabani[k] = esList;
-                        }
-                    });
+                // Hem senin indirdiğin phpMyAdmin yapısını hem de standart JSON yapısını okuyabilen Gelişmiş Algoritma
+                if (Array.isArray(rawData) && rawData.find(obj => obj.type === "table")) {
+                    const tableObj = rawData.find(obj => obj.type === "table" && obj.name === "esanlam");
+                    if (tableObj && tableObj.data) {
+                        tableObj.data.forEach(row => {
+                            if(!row.kelime) return;
+                            let k = row.kelime.trim().toLowerCase();
+                            
+                            // Eş Anlamları Topla
+                            let esList = [];
+                            if(row.esanlam && row.esanlam.trim()) esList.push(row.esanlam.trim());
+                            if(row.esanlam2 && row.esanlam2.trim()) esList.push(row.esanlam2.trim());
+                            if(row.esanlam3 && row.esanlam3.trim()) esList.push(row.esanlam3.trim());
+                            if(row.esanlam4 && row.esanlam4.trim()) esList.push(row.esanlam4.trim());
+                            
+                            // İleride JSON dosyana "zitanlam", "essesli", "yananlam" sütunları eklersen diye sistemi hazırlıyoruz:
+                            let zitList = row.zitanlam ? [row.zitanlam.trim()] : [];
+                            let sesList = row.essesli ? [row.essesli.trim()] : [];
+                            let yanList = row.yananlam ? [row.yananlam.trim()] : [];
+
+                            kelimeVeritabani[k] = { es: esList, zit: zitList, ses: sesList, yan: yanList };
+                        });
+                    }
+                } else {
+                    // Eğer ileride kendi ellerinle yazdığın standart JSON formatını kullanırsan:
+                    for (const [k, v] of Object.entries(rawData)) {
+                        kelimeVeritabani[k.trim().toLowerCase()] = {
+                            es: v.es || [],
+                            zit: v.zit || [],
+                            ses: v.ses || [],
+                            yan: v.yan || []
+                        };
+                    }
                 }
-                console.log(Object.keys(kelimeVeritabani).length + " adet eş anlamlı kelime başarıyla belleğe yüklendi!");
+                console.log("Veritabanı 4'lü matris (Eş, Zıt, Ses, Yan) olarak belleğe yüklendi!");
             } catch(e) {
-                console.log("kelimeler.json yüklenirken hata oluştu. Lütfen dosya adını ve yapısını kontrol edin.");
+                console.log("kelimeler.json okunamadı veya bulunamadı.");
             }
         });
 
@@ -831,7 +845,7 @@
         }
 
         // =========================================================================
-        // TDK ARAMA MOTORU (BELLEKTEKİ VERİYİ IŞIK HIZINDA OKUR)
+        // 4'LÜ (ULTIMATE) TDK ARAMA MOTORU
         // =========================================================================
         async function fetchTDK() {
             const input = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -842,17 +856,34 @@
             res.innerHTML = ''; load.style.display = 'block';
             
             try {
-                // 1. TDK Anlamını Çek
+                // 1. TDK'den Anlamları Çek
                 const r = await fetch(`https://sozluk.gov.tr/gts?ara=${input}`);
                 const data = await r.json();
                 
-                // 2. BELLEKTEKİ KENDİ VERİTABANIMIZDAN Eş Anlamlıyı Çek
-                let esZitHtml = '';
+                // 2. KENDİ VERİTABANIMIZDAN 4'LÜ YAPILARI ÇEK (Eş, Zıt, Ses, Yan)
+                let extraHtml = '';
                 if (kelimeVeritabani[input]) {
-                    const es = kelimeVeritabani[input];
-                    esZitHtml += `<div style="display:flex; gap:10px; margin-top: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">`;
-                    esZitHtml += `<span style="background: rgba(14,165,233,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 10px rgba(14,165,233,0.2);">🤝 Eş Anlamlısı: ${es.join(', ')}</span>`;
-                    esZitHtml += `</div>`;
+                    const veri = kelimeVeritabani[input];
+                    extraHtml += `<div style="display:flex; gap:12px; margin-top: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap;">`;
+                    
+                    // Eş Anlamlısı (Mavi)
+                    if (veri.es && veri.es.length > 0) {
+                        extraHtml += `<span style="background: rgba(14,165,233,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 18px; border-radius: 30px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 15px rgba(14,165,233,0.2); letter-spacing: 0.5px;">🤝 Eş Anlamlısı: ${veri.es.join(', ')}</span>`;
+                    }
+                    // Zıt Anlamlısı (Kırmızı)
+                    if (veri.zit && veri.zit.length > 0) {
+                        extraHtml += `<span style="background: rgba(239,68,68,0.1); border: 1px solid #ef4444; color: #ef4444; padding: 8px 18px; border-radius: 30px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 15px rgba(239,68,68,0.2); letter-spacing: 0.5px;">⚔️ Zıt Anlamlısı: ${veri.zit.join(', ')}</span>`;
+                    }
+                    // Eş Seslisi (Mor)
+                    if (veri.ses && veri.ses.length > 0) {
+                        extraHtml += `<span style="background: rgba(168,85,247,0.1); border: 1px solid #a855f7; color: #d8b4fe; padding: 8px 18px; border-radius: 30px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 15px rgba(168,85,247,0.2); letter-spacing: 0.5px;">🔊 Eş Seslisi (Sesteş): ${veri.ses.join(', ')}</span>`;
+                    }
+                    // Yan Anlam (Turuncu)
+                    if (veri.yan && veri.yan.length > 0) {
+                        extraHtml += `<span style="background: rgba(249,115,22,0.1); border: 1px solid #f97316; color: #fdba74; padding: 8px 18px; border-radius: 30px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 15px rgba(249,115,22,0.2); letter-spacing: 0.5px;">枝 Yan Anlam: ${veri.yan.join(', ')}</span>`;
+                    }
+                    
+                    extraHtml += `</div>`;
                 }
 
                 load.style.display = 'none';
@@ -864,11 +895,11 @@
                 
                 const word = data[0];
                 
-                // HTML OLUŞTURMA
                 let html = `<div class="result-card">
-                    <h2 style="margin-top:0; color:var(--primary); font-size:2.8rem; margin-bottom: 0.2rem; text-transform: lowercase; letter-spacing: -1px;">${word.madde}</h2>
-                    ${esZitHtml}`; 
+                    <h2 style="margin-top:0; color:var(--primary); font-size:3rem; margin-bottom: 0.2rem; text-transform: lowercase; letter-spacing: -1.5px;">${word.madde}</h2>
+                    ${extraHtml}`; 
                 
+                // TDK'den Gelen Normal Anlamlar
                 if(word.anlamlarListe) {
                     word.anlamlarListe.forEach((a, i) => {
                         html += `<div style="padding:15px; border-bottom:1px solid var(--border); font-size:1.15rem; color:var(--text); line-height:1.6;"><strong>${i+1}.</strong> ${a.anlam}</div>`;
