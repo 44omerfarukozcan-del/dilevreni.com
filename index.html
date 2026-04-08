@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-E1QW2YYYDT"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E1QW2YYYDT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -795,23 +794,78 @@
             document.getElementById('searchInput').value = word;
             fetchTDK();
         }
+
+        // =========================================================================
+        // YENİ EŞ/ZIT ANLAMLI KELİME MOTORU (KENDİ JSON DOSYAMIZI OKUR)
+        // =========================================================================
         async function fetchTDK() {
-            const input = document.getElementById('searchInput').value.trim();
+            // Kullanıcının yazdığı kelimeyi al ve küçük harfe çevir
+            const input = document.getElementById('searchInput').value.trim().toLowerCase();
             if (!input) return;
+            
             const res = document.getElementById('tdk-results');
             const load = document.getElementById('tdk-loading');
             res.innerHTML = ''; load.style.display = 'block';
+            
             try {
+                // 1. TDK API'den kelimenin anlamını çekiyoruz
                 const r = await fetch(`https://sozluk.gov.tr/gts?ara=${input}`);
                 const data = await r.json();
+                
+                // 2. KENDİ VERİTABANIMIZDAN (kelimeler.json) eş ve zıt anlamları çekiyoruz
+                let esZitHtml = '';
+                try {
+                    const localRes = await fetch('kelimeler.json');
+                    const localData = await localRes.json();
+                    
+                    // Eğer kullanıcının yazdığı kelime bizim veritabanında varsa:
+                    if (localData[input]) {
+                        const es = localData[input].es;
+                        const zit = localData[input].zit;
+                        
+                        esZitHtml += `<div style="display:flex; gap:10px; margin-top: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">`;
+                        
+                        if (es && es.length > 0) {
+                            esZitHtml += `<span style="background: rgba(14,165,233,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 10px rgba(14,165,233,0.2);">🤝 Eş Anlamlısı: ${es.join(', ')}</span>`;
+                        }
+                        if (zit && zit.length > 0) {
+                            esZitHtml += `<span style="background: rgba(239,68,68,0.1); border: 1px solid #ef4444; color: #ef4444; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 10px rgba(239,68,68,0.2);">⚔️ Zıt Anlamlısı: ${zit.join(', ')}</span>`;
+                        }
+                        
+                        esZitHtml += `</div>`;
+                    }
+                } catch (e) {
+                    console.log("Kendi kelime veritabanımıza (kelimeler.json) ulaşılamadı. Lütfen dosyanın yüklü olduğundan emin olun.");
+                }
+
                 load.style.display = 'none';
-                if (data.error) { res.innerHTML = `<div class="result-card" style="border-color:#ef4444;"><h3 style="color:#ef4444; margin:0;">Bulunamadı</h3><p style="color:var(--secondary);">TDK veritabanında böyle bir kelime bulunmuyor.</p></div>`; return; }
+                
+                if (data.error) { 
+                    res.innerHTML = `<div class="result-card" style="border-color:#ef4444;"><h3 style="color:#ef4444; margin:0;">Bulunamadı</h3><p style="color:var(--secondary);">TDK veritabanında böyle bir kelime bulunmuyor.</p></div>`; 
+                    return; 
+                }
+                
                 const word = data[0];
-                let html = `<div class="result-card"><h2 style="margin-top:0; color:var(--primary); font-size:2.5rem;">${word.madde}</h2>`;
-                if(word.anlamlarListe) word.anlamlarListe.forEach((a, i) => html += `<div style="padding:15px; border-bottom:1px solid var(--border); font-size:1.15rem; color:var(--text); line-height:1.6;"><strong>${i+1}.</strong> ${a.anlam}</div>`);
+                
+                // KELİME BAŞLIĞI VE ALTINA BİZİM NEON EŞ/ZIT ANLAM KUTULARI
+                let html = `<div class="result-card">
+                    <h2 style="margin-top:0; color:var(--primary); font-size:2.8rem; margin-bottom: 0.2rem; text-transform: lowercase; letter-spacing: -1px;">${word.madde}</h2>
+                    ${esZitHtml}`; 
+                
+                // TDK Anlamları
+                if(word.anlamlarListe) {
+                    word.anlamlarListe.forEach((a, i) => {
+                        html += `<div style="padding:15px; border-bottom:1px solid var(--border); font-size:1.15rem; color:var(--text); line-height:1.6;"><strong>${i+1}.</strong> ${a.anlam}</div>`;
+                    });
+                }
                 res.innerHTML = html + `</div>`;
-            } catch (err) { load.style.display = 'none'; res.innerHTML = `<div style="color:#ef4444; font-weight:bold; padding: 1rem;">Bağlantı Hatası</div>`; }
+                
+            } catch (err) { 
+                load.style.display = 'none'; 
+                res.innerHTML = `<div style="color:#ef4444; font-weight:bold; padding: 1rem;">Bağlantı Hatası</div>`; 
+            }
         }
+        // =========================================================================
 
         function quickCategoryBooks(subject) {
             document.getElementById('bookInput').value = '';
